@@ -1,7 +1,7 @@
 import { Router } from "../deps.ts";
-import * as ProductService from "../services/products.ts"
+import * as ProductService from "../services/products.ts";
 
-const router = new Router()
+const router = new Router();
 router.get("/", (ctx) => {
   ctx.response.body = `<!DOCTYPE html>
     <html>
@@ -25,8 +25,7 @@ router.get("/about", (ctx) => {
 });
 
 router.get("/products", (ctx) => {
-
-  const data = ProductService.getAll()
+  const data = ProductService.getAll();
 
   ctx.response.body = `<!DOCTYPE html>
     <html>
@@ -40,10 +39,10 @@ router.get("/products", (ctx) => {
 });
 
 router.get("/products/:id", (ctx) => {
-  const id = ctx.params.id
+  const id = ctx.params.id;
 
-  const data = ProductService.get(id)
-  
+  const data = ProductService.get(id);
+
   ctx.response.body = `<!DOCTYPE html>
     <html>
       <head><title>Product</title><head>
@@ -66,4 +65,4 @@ router.get("/cart", (ctx) => {
   `;
 });
 
-export default router
+export default router;

@@ -1,8 +1,8 @@
 import { Router } from "../deps.ts";
 
 const router = new Router({
-  prefix: "/shop"
-})
+  prefix: "/shop",
+});
 router.get("/", (ctx) => {
   ctx.response.body = `<!DOCTYPE html>
     <html>
@@ -14,4 +14,4 @@ router.get("/", (ctx) => {
   `;
 });
 
-export default router
+export default router;

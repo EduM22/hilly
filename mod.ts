@@ -8,7 +8,7 @@ app.use(async (ctx, next) => {
   await next();
   const ms = Date.now() - start;
   ctx.response.headers.set("X-Response-Time", `${ms}ms`);
-})
+});
 app.use(indexRoutes.routes());
 app.use(indexRoutes.allowedMethods());
 app.use(shopRoutes.routes());
