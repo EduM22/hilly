@@ -1,34 +1,17 @@
-import { Router, serve } from "./deps.ts";
+import { Application } from "./deps.ts";
+import shopRoutes from "./routes/store.ts";
+import indexRoutes from "./routes/index.ts";
 
-const router = Router();
+const app = new Application();
+app.use(async (ctx, next) => {
+  const start = Date.now();
+  await next();
+  const ms = Date.now() - start;
+  ctx.response.headers.set("X-Response-Time", `${ms}ms`);
+})
+app.use(indexRoutes.routes());
+app.use(indexRoutes.allowedMethods());
+app.use(shopRoutes.routes());
+app.use(shopRoutes.allowedMethods());
 
-// @ts-ignore The method is not defined in types
-router.get("/", (_req: Request) => {
-  return new Response(JSON.stringify('home'), { status: 200 });
-});
-
-// @ts-ignore The method is not defined in types
-router.get("/about", (_req: Request) => {
-  return new Response(JSON.stringify('about'), { status: 200 });
-});
-
-// @ts-ignore The method is not defined in types
-router.get("/products", (_req: Request) => {
-  return new Response(JSON.stringify('products'), { status: 200 });
-});
-
-// @ts-ignore The method is not defined in types
-router.get("/products/:id", (_req: Request) => {
-  return new Response(JSON.stringify('product'), { status: 200 });
-});
-
-// @ts-ignore The method is not defined in types
-router.get("/cart", (_req: Request) => {
-  return new Response(JSON.stringify('cart'), { status: 200 });
-});
-
-// @ts-ignore The method is not defined in types
-router.all("*", () => new Response("Not Found.", { status: 404 }));
-
-// @ts-ignore The method is not defined in types
-await serve(router.handle);
+app.listen({ port: 8080 });
