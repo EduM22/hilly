@@ -1,3 +1,3 @@
 # hilly
 
-hilly is a cli for munk service
+hilly is a cli for munk faas service

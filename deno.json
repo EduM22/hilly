@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run --watch ./src/main.ts"
+  },
+  "imports": {
+    "@deno/esbuild-plugin": "jsr:@deno/esbuild-plugin@^1.0.1",
+    "esbuild": "npm:esbuild@^0.25.5"
+  }
+}
