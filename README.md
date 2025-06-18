@@ -1,3 +1,3 @@
 # hilly
 
-hilly is a e-commerce saas project
+hilly is a cli for munk service
