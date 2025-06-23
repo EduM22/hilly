@@ -1,11 +1,14 @@
 import * as esbuild from "esbuild";
 import { denoPlugin } from "@deno/esbuild-plugin";
 
+const VERSION = "v0.1.0";
+
 if (import.meta.main) {
   try {
     const { args } = Deno;
 
     if (args.length === 0 || args.length < 4 || args.length > 6) {
+      console.log(`hilly version: ${VERSION}`)
       console.log(
         "Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional)",
       );
