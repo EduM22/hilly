@@ -8,7 +8,7 @@ if (import.meta.main) {
     const { args } = Deno;
 
     if (args.length === 0 || args.length < 4 || args.length > 6) {
-      console.log(`hilly version: ${VERSION}`)
+      console.log(`hilly version: ${VERSION}`);
       console.log(
         "Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional)",
       );
@@ -27,10 +27,13 @@ if (import.meta.main) {
     }
     const token = args[tokenArg + 1];
 
-    const domainArg = args.findIndex((x) => x == "--d");
+    const domainArg = args.findIndex((x) => x == "--h");
     let domain = "https://admin.ecma.run";
     if (domainArg != -1) {
       domain = args[domainArg + 1];
+      if (!domain.startsWith("http://") && !domain.startsWith("https://")) {
+        domain = `https://${domain}`;
+      }
     }
 
     const result = await esbuild.build({
