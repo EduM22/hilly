@@ -1,7 +1,7 @@
 import * as esbuild from "esbuild";
 import { denoPlugin } from "@deno/esbuild-plugin";
 
-const VERSION = "v0.1.0";
+const VERSION = "v0.1.1";
 
 if (import.meta.main) {
   try {
