@@ -1,24 +1,57 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@deno/esbuild-plugin@^1.0.1": "1.0.1",
+    "jsr:@deno/esbuild-plugin@^1.0.1": "1.1.1",
     "jsr:@deno/loader@~0.1.2": "0.1.2",
+    "jsr:@deno/loader@~0.2.1": "0.2.1",
+    "jsr:@std/collections@^1.1.1": "1.1.2",
+    "jsr:@std/internal@^1.0.9": "1.0.10",
     "jsr:@std/path@^1.1.0": "1.1.0",
+    "jsr:@std/path@^1.1.1": "1.1.1",
+    "jsr:@std/toml@^1.0.8": "1.0.8",
     "npm:esbuild@~0.25.5": "0.25.5"
   },
   "jsr": {
     "@deno/esbuild-plugin@1.0.1": {
       "integrity": "84b455e28b8750b943d30f09a585c8783d92ad7ecfd872267ade6f8695cd5c36",
       "dependencies": [
-        "jsr:@deno/loader",
-        "jsr:@std/path"
+        "jsr:@deno/loader@~0.1.2",
+        "jsr:@std/path@^1.1.0"
+      ]
+    },
+    "@deno/esbuild-plugin@1.1.1": {
+      "integrity": "590fb5382b09a78c203aa845afc36ee4dcd7737cd8ffcc604ef5710587801b8b",
+      "dependencies": [
+        "jsr:@deno/loader@~0.2.1",
+        "jsr:@std/path@^1.1.1"
       ]
     },
     "@deno/loader@0.1.2": {
       "integrity": "36882e2ef7cc57a0f8924877593b98e3c58fbd2359884ff4e0bf2f50ff6ceff3"
     },
+    "@deno/loader@0.2.1": {
+      "integrity": "c9fcc7309ce6a77306d37a7dc4b886e547aafc5204a4a28b0eafa523ffa5c9fc"
+    },
+    "@std/collections@1.1.2": {
+      "integrity": "f1685dd45c3ec27c39d0e8a642ccf810f391ec8a6cb5e7355926e6dacc64c43e"
+    },
+    "@std/internal@1.0.10": {
+      "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
+    },
     "@std/path@1.1.0": {
       "integrity": "ddc94f8e3c275627281cbc23341df6b8bcc874d70374f75fec2533521e3d6886"
+    },
+    "@std/path@1.1.1": {
+      "integrity": "fe00026bd3a7e6a27f73709b83c607798be40e20c81dde655ce34052fd82ec76",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/toml@1.0.8": {
+      "integrity": "eb8ae76b4cc1c6c13f2a91123675823adbec2380de75cd3748c628960d952164",
+      "dependencies": [
+        "jsr:@std/collections"
+      ]
     }
   },
   "npm": {
@@ -183,6 +216,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/esbuild-plugin@^1.0.1",
+      "jsr:@std/path@^1.1.1",
+      "jsr:@std/toml@^1.0.8",
       "npm:esbuild@~0.25.5"
     ]
   }
