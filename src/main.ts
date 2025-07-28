@@ -104,7 +104,7 @@ async function bundle(file: string): Promise<string> {
 }
 
 async function upload(code: string, domain: string, token: string) {
-  const link = `${domain}/api/function`;
+  const link = `${domain}/api/functions`;
   const response = await fetch(link, {
     method: "POST",
     headers: {
