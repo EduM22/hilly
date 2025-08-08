@@ -9,7 +9,7 @@ run this in the cmd:\
 
 ## Deploy
 
-`hilly deploy <entry-point-file> --t <token> --h <domain> (optional)`\
+`hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional)`\
 `hilly deploy ./munk.toml`
 
 ### munk.toml template
@@ -18,5 +18,6 @@ run this in the cmd:\
 [app]
 path = "./<script>.ts"
 domain = "http://localhost:3000/" (optional)
+env = "./prod.env" (optional)
 token = "<test123>"
 ```
