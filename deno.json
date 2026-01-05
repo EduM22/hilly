@@ -1,11 +1,11 @@
 {
   "tasks": {
-    "dev": "deno run --watch ./src/main.ts"
+    "dev": "deno run --allow-env --allow-read --allow-write --allow-net --allow-run --watch ./src/main.ts"
   },
   "imports": {
-    "@deno/esbuild-plugin": "jsr:@deno/esbuild-plugin@^1.0.1",
-    "@std/path": "jsr:@std/path@^1.1.1",
-    "@std/toml": "jsr:@std/toml@^1.0.8",
-    "esbuild": "npm:esbuild@^0.25.5"
+    "@deno/esbuild-plugin": "jsr:@deno/esbuild-plugin@^1.2.1",
+    "@std/path": "jsr:@std/path@^1.1.4",
+    "@std/toml": "jsr:@std/toml@^1.0.11",
+    "esbuild": "npm:esbuild@^0.27.2"
   }
 }

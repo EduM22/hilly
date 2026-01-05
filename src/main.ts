@@ -3,7 +3,7 @@ import { denoPlugin } from "@deno/esbuild-plugin";
 import { parse } from "@std/toml";
 import { dirname, resolve } from "@std/path";
 
-const VERSION = "v0.3.0";
+const VERSION = "v0.4.0";
 
 if (import.meta.main) {
   try {
@@ -15,7 +15,7 @@ if (import.meta.main) {
         "Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional)",
       );
       console.log(
-        "Usage: hilly deploy ./munk.toml",
+        "Usage: hilly deploy ./munk.toml --t <token>",
       );
       Deno.exit(1);
     }
@@ -31,11 +31,16 @@ if (import.meta.main) {
 
       const dir_path = dirname(args[1]);
 
+      const tokenArg = args.findIndex((x) => x == "--t");
+      if (tokenArg == -1) {
+        console.log("No argument for token");
+        Deno.exit(1);
+      }
+      const token = args[tokenArg + 1];
+
       const app = obj.app;
       //@ts-expect-error not on type
       let domain = app.domain ?? "https://admin.ecma.run";
-      //@ts-expect-error not on type
-      const token = app.token ?? "";
       domain = domainCheck(domain);
       //@ts-expect-error not on type
       const app_path = app.path;
@@ -44,8 +49,8 @@ if (import.meta.main) {
       const path = resolve(dir_path, app_path);
       let envArr: Array<Record<string, string>> = [];
       if (env_path) {
-        const envPath = resolve(dir_path, env_path)
-        envArr = await envs(envPath)
+        const envPath = resolve(dir_path, env_path);
+        envArr = await envs(envPath);
       }
       const code = await bundle(path);
       await upload(code, domain, token, envArr);
@@ -68,7 +73,7 @@ if (import.meta.main) {
       const envArg = args.findIndex((x) => x == "--env-file");
       if (envArg != -1) {
         const envPath = args[envArg + 1];
-        envArr = await envs(envPath)
+        envArr = await envs(envPath);
       }
 
       const code = await bundle(args[1]);
@@ -76,6 +81,7 @@ if (import.meta.main) {
     }
   } catch (ex) {
     console.error(ex);
+    Deno.exit(1);
   }
 }
 
@@ -116,7 +122,12 @@ async function bundle(file: string): Promise<string> {
   }
 }
 
-async function upload(code: string, domain: string, token: string, envs: Array<Record<string, string>>) {
+async function upload(
+  code: string,
+  domain: string,
+  token: string,
+  envs: Array<Record<string, string>>,
+) {
   const link = `${domain}/api/functions`;
   const response = await fetch(link, {
     method: "POST",
@@ -125,7 +136,7 @@ async function upload(code: string, domain: string, token: string, envs: Array<R
     },
     body: JSON.stringify({
       code,
-      envs
+      envs,
     }),
   });
 
@@ -153,22 +164,22 @@ function domainCheck(domain: string): string {
   return domain;
 }
 
-async function envs(path: string) : Promise<Array<Record<string, string>>> {
+async function envs(path: string): Promise<Array<Record<string, string>>> {
   try {
     const data = await Deno.readTextFile(path);
-  
+
     const lines = data.split("\n");
-    const envs = lines.map(line => {
+    const envs = lines.map((line) => {
       const [key, value] = line.split("=");
       const obj = {};
       //@ts-expect-error not on type
       obj[key] = value;
-      return obj
-    })
-  
+      return obj;
+    });
+
     return envs;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return [];
   }
 }
