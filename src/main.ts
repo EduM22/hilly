@@ -3,7 +3,7 @@ import { denoPlugin } from "@deno/esbuild-plugin";
 import { parse } from "@std/toml";
 import { dirname, resolve } from "@std/path";
 
-const VERSION = "v0.4.0";
+const VERSION = "v0.5.0";
 
 if (import.meta.main) {
   try {
@@ -20,7 +20,7 @@ if (import.meta.main) {
       Deno.exit(1);
     }
 
-    if (args[0] !== "deploy") {
+    if (args[0] !== "deploy" && args[0] !== "bundle") {
       console.log("The first arg must be 'deploy'");
       Deno.exit(1);
     }
@@ -53,7 +53,11 @@ if (import.meta.main) {
         envArr = await envs(envPath);
       }
       const code = await bundle(path);
-      await upload(code, domain, token, envArr);
+      if (args[0] == "bundle") {
+        await Deno.writeFile("munk.js", new TextEncoder().encode(code)); 
+      } else {
+        await upload(code, domain, token, envArr);
+      }
     } else {
       const tokenArg = args.findIndex((x) => x == "--t");
       if (tokenArg == -1) {
@@ -77,7 +81,11 @@ if (import.meta.main) {
       }
 
       const code = await bundle(args[1]);
-      await upload(code, domain, token, envArr);
+      if (args[0] == "bundle") {
+        await Deno.writeFile("munk.js", new TextEncoder().encode(code)); 
+      } else {
+        await upload(code, domain, token, envArr);
+      }
     }
   } catch (ex) {
     console.error(ex);
@@ -112,7 +120,7 @@ async function bundle(file: string): Promise<string> {
 
     if (result.outputFiles[0]) {
       const file = result.outputFiles[0];
-      const source = file.text.replaceAll('"', "'");
+      const source = file.text;
 
       return source;
     } else {
@@ -150,6 +158,7 @@ async function upload(
   const functionId = response.headers.get("munk-function-id");
 
   console.log(`👋 New function created with id: ${functionId}`);
+  console.log(`🚀 Call it by setting the header 'munk-function-id': '${functionId}' in your call to ${domain}`)
 }
 
 function domainCheck(domain: string): string {
