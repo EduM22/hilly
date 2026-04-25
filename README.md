@@ -9,7 +9,7 @@ run this in the cmd:\
 
 ## Deploy
 
-`hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional)`\
+`"Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional) --cpu-limit <limit> (optional) --wall-limit <limit> (optional)"`\
 `hilly deploy ./munk.toml --t <token>`
 
 ### munk.toml template
@@ -19,4 +19,6 @@ run this in the cmd:\
 path = "./<script>.ts"
 domain = "http://localhost:3000/" (optional)
 env = "./prod.env" (optional)
+cpu = "50ms" (optional)
+wall = "10s" (optional)
 ```

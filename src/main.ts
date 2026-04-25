@@ -3,16 +3,16 @@ import { denoPlugin } from "@deno/esbuild-plugin";
 import { parse } from "@std/toml";
 import { dirname, resolve } from "@std/path";
 
-const VERSION = "v0.5.0";
+const VERSION = "v0.6.0";
 
 if (import.meta.main) {
   try {
     const { args } = Deno;
 
-    if (args.length === 0 || args.length < 1 || args.length > 8) {
+    if (args.length === 0 || args.length < 1 || args.length > 10) {
       console.log(`hilly version: ${VERSION}`);
       console.log(
-        "Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional)",
+        "Usage: hilly deploy <entry-point-file> --t <token> --h <domain> (optional) --env-file <file> (optional) --cpu-limit <limit> (optional) --wall-limit <limit> (optional)",
       );
       console.log(
         "Usage: hilly deploy ./munk.toml --t <token>",
@@ -43,6 +43,10 @@ if (import.meta.main) {
       let domain = app.domain ?? "https://admin.ecma.run";
       domain = domainCheck(domain);
       //@ts-expect-error not on type
+      const cpu = app.cpu ?? "50ms";
+      //@ts-expect-error not on type
+      const wall = app.wall ?? "10s";
+      //@ts-expect-error not on type
       const app_path = app.path;
       //@ts-expect-error not on type
       const env_path = app.env;
@@ -56,7 +60,7 @@ if (import.meta.main) {
       if (args[0] == "bundle") {
         await Deno.writeFile("munk.js", new TextEncoder().encode(code)); 
       } else {
-        await upload(code, domain, token, envArr);
+        await upload(code, domain, token, envArr, cpu, wall);
       }
     } else {
       const tokenArg = args.findIndex((x) => x == "--t");
@@ -80,11 +84,23 @@ if (import.meta.main) {
         envArr = await envs(envPath);
       }
 
+      let cpu = "50ms";
+      const cpuArg = args.findIndex((x) => x == "--cpu-limit");
+      if (cpuArg != -1) {
+        cpu = args[cpuArg + 1];
+      }
+
+      let wall = "10s";
+      const wallArg = args.findIndex((x) => x == "--wall-limit");
+      if (wallArg != -1) {
+        wall = args[wallArg + 1];
+      }
+
       const code = await bundle(args[1]);
       if (args[0] == "bundle") {
         await Deno.writeFile("munk.js", new TextEncoder().encode(code)); 
       } else {
-        await upload(code, domain, token, envArr);
+        await upload(code, domain, token, envArr, cpu, wall);
       }
     }
   } catch (ex) {
@@ -135,6 +151,8 @@ async function upload(
   domain: string,
   token: string,
   envs: Array<Record<string, string>>,
+  cpu: string,
+  wall: string
 ) {
   const link = `${domain}/api/functions`;
   const response = await fetch(link, {
@@ -145,6 +163,10 @@ async function upload(
     body: JSON.stringify({
       code,
       envs,
+      limits: {
+        walltime: wall,
+        cputime: cpu
+      }
     }),
   });
 
