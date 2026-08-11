@@ -3,7 +3,7 @@ import { denoPlugin } from "@deno/esbuild-plugin";
 import { parse } from "@std/toml";
 import { dirname, resolve } from "@std/path";
 
-const VERSION = "v0.7.0";
+const VERSION = "v0.7.1";
 
 if (import.meta.main) {
   try {
@@ -52,7 +52,8 @@ if (import.meta.main) {
 }
 
 function printHelp() {
-  console.log(`hilly ${VERSION} - CLI for munk FaaS service (https://github.com/EduM22/munk-runner/)
+  console.log(
+    `hilly ${VERSION} - CLI for munk FaaS service (https://github.com/EduM22/munk-runner/)
 
 Usage:
   hilly <command> [options]
@@ -62,7 +63,7 @@ Commands:
   bundle <file|munk.toml>   Bundle a function into munk.js locally
   list                      List all deployed functions
   delete <function-id>      Delete a deployed function
-  logs <function-id>        View or stream execution logs for a function
+  logs [function-id]        View or stream execution logs (function-id optional with -f)
   health                    Check server health status and version
 
 Options:
@@ -76,7 +77,8 @@ Options:
   -l, --limit <number>      Max number of historical logs to fetch (logs command only, default: 100)
   -h, --help                Show help information
   -v, --version             Show CLI version
-`);
+`,
+  );
 }
 
 function getArgValue(args: string[], ...flags: string[]): string | undefined {
@@ -94,8 +96,7 @@ function hasFlag(args: string[], ...flags: string[]): boolean {
 }
 
 function resolveToken(args: string[], tomlToken?: string): string {
-  const token =
-    getArgValue(args, "--t", "--token") ??
+  const token = getArgValue(args, "--t", "--token") ??
     tomlToken ??
     Deno.env.get("MUNK_TOKEN") ??
     Deno.env.get("MUNK_AUTH_HEADER_VALUE");
@@ -110,8 +111,7 @@ function resolveToken(args: string[], tomlToken?: string): string {
 }
 
 function resolveDomain(args: string[], tomlDomain?: string): string {
-  const domain =
-    getArgValue(args, "--h", "--host", "--domain") ??
+  const domain = getArgValue(args, "--h", "--host", "--domain") ??
     tomlDomain ??
     Deno.env.get("MUNK_HOST") ??
     Deno.env.get("MUNK_DOMAIN") ??
@@ -161,7 +161,9 @@ async function handleDeploy(args: string[]) {
 
     const app_path = app.path;
     if (!app_path) {
-      console.error("Error: 'path' field is required in [app] section of munk.toml");
+      console.error(
+        "Error: 'path' field is required in [app] section of munk.toml",
+      );
       Deno.exit(1);
     }
     const scriptPath = resolve(dir_path, app_path);
@@ -204,7 +206,9 @@ async function handleBundle(args: string[]) {
     const dir_path = dirname(target);
     const app_path = obj.app?.path;
     if (!app_path) {
-      console.error("Error: 'path' field is required in [app] section of munk.toml");
+      console.error(
+        "Error: 'path' field is required in [app] section of munk.toml",
+      );
       Deno.exit(1);
     }
     scriptPath = resolve(dir_path, app_path);
@@ -228,7 +232,9 @@ async function handleList(args: string[]) {
   });
 
   if (!response.ok) {
-    console.error(`Could not list functions | status: ${response.status} ${response.statusText}`);
+    console.error(
+      `Could not list functions | status: ${response.status} ${response.statusText}`,
+    );
     console.error(await response.text());
     Deno.exit(1);
   }
@@ -248,7 +254,9 @@ async function handleList(args: string[]) {
     const createdStr = fn.created_at ? ` | Created: ${fn.created_at}` : "";
     const wallLimit = fn.limits?.walltime ?? "N/A";
     const cpuLimit = fn.limits?.cputime ?? "N/A";
-    console.log(`• ID: ${fn.id}${nameStr}${createdStr} (Limits: CPU ${cpuLimit}, Wall ${wallLimit})`);
+    console.log(
+      `• ID: ${fn.id}${nameStr}${createdStr} (Limits: CPU ${cpuLimit}, Wall ${wallLimit})`,
+    );
   }
 }
 
@@ -271,7 +279,9 @@ async function handleDelete(args: string[]) {
   });
 
   if (!response.ok && response.status !== 204) {
-    console.error(`Could not delete function | status: ${response.status} ${response.statusText}`);
+    console.error(
+      `Could not delete function | status: ${response.status} ${response.statusText}`,
+    );
     console.error(await response.text());
     Deno.exit(1);
   }
@@ -280,26 +290,33 @@ async function handleDelete(args: string[]) {
 }
 
 async function handleLogs(args: string[]) {
-  if (args.length === 0 || args[0].startsWith("-")) {
-    console.error("Usage: hilly logs <function-id> [--follow / -f] [--limit <n>] [options]");
-    Deno.exit(1);
-  }
-
-  const functionId = args[0];
+  const follow = hasFlag(args, "-f", "--follow");
   const token = resolveToken(args);
   const domain = resolveDomain(args);
-  const follow = hasFlag(args, "-f", "--follow");
+  const functionId = args.find((arg) => !arg.startsWith("-"));
 
   if (follow) {
     await streamLogs(domain, token, functionId);
   } else {
+    if (!functionId) {
+      console.error(
+        "Usage: hilly logs <function-id> [--follow / -f] [--limit <n>] [options]",
+      );
+      Deno.exit(1);
+    }
     const limit = getArgValue(args, "-l", "--limit") ?? "100";
     await getLogs(domain, token, functionId, limit);
   }
 }
 
-async function getLogs(domain: string, token: string, functionId: string, limit: string) {
-  const link = `${domain}/api/logs?id=${encodeURIComponent(functionId)}&limit=${encodeURIComponent(limit)}`;
+async function getLogs(
+  domain: string,
+  token: string,
+  functionId: string,
+  limit: string,
+) {
+  const link = `${domain}/api/logs?id=${encodeURIComponent(functionId)}&limit=${encodeURIComponent(limit)
+    }`;
   const response = await fetch(link, {
     method: "GET",
     headers: {
@@ -309,7 +326,9 @@ async function getLogs(domain: string, token: string, functionId: string, limit:
   });
 
   if (!response.ok) {
-    console.error(`Could not fetch logs | status: ${response.status} ${response.statusText}`);
+    console.error(
+      `Could not fetch logs | status: ${response.status} ${response.statusText}`,
+    );
     console.error(await response.text());
     Deno.exit(1);
   }
@@ -322,7 +341,9 @@ async function getLogs(domain: string, token: string, functionId: string, limit:
     return;
   }
 
-  console.log(`📜 Execution Logs for function '${functionId}' (${logs.length}):`);
+  console.log(
+    `📜 Execution Logs for function '${functionId}' (${logs.length}):`,
+  );
   console.log("--------------------------------------------------");
   for (const log of logs) {
     const prefix = log.is_error ? "❌ [ERROR]" : "ℹ️ [INFO]";
@@ -331,19 +352,20 @@ async function getLogs(domain: string, token: string, functionId: string, limit:
   }
 }
 
-async function streamLogs(domain: string, token: string, functionId: string) {
+async function streamLogs(domain: string, token: string, functionId?: string) {
   const link = `${domain}/api/logs/stream`;
   const response = await fetch(link, {
     method: "GET",
     headers: {
       "munk-auth": token,
       "Authorization": `Bearer ${token}`,
-      "munk-function-id": functionId,
     },
   });
 
   if (!response.ok) {
-    console.error(`Could not stream logs | status: ${response.status} ${response.statusText}`);
+    console.error(
+      `Could not stream logs | status: ${response.status} ${response.statusText}`,
+    );
     console.error(await response.text());
     Deno.exit(1);
   }
@@ -353,7 +375,12 @@ async function streamLogs(domain: string, token: string, functionId: string) {
     Deno.exit(1);
   }
 
-  console.log(`📡 Streaming real-time logs for function '${functionId}'... (Press Ctrl+C to stop)`);
+  const targetStr = functionId
+    ? `for function '${functionId}'`
+    : "for all functions";
+  console.log(
+    `📡 Streaming real-time logs ${targetStr}... (Press Ctrl+C to stop)`,
+  );
   console.log("--------------------------------------------------");
 
   const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -374,9 +401,15 @@ async function streamLogs(domain: string, token: string, functionId: string) {
 
         try {
           const log = JSON.parse(dataStr);
+          const logFnId = log.function_id ?? log.functionId;
+          if (functionId && logFnId && logFnId !== functionId) {
+            continue;
+          }
+
           const prefix = log.is_error ? "❌ [ERROR]" : "ℹ️ [INFO]";
           const timeStr = log.created_at ?? new Date().toISOString();
-          console.log(`${timeStr} ${prefix} ${log.message}`);
+          const fnIdStr = !functionId && logFnId ? `[${logFnId}] ` : "";
+          console.log(`${timeStr} ${prefix} ${fnIdStr}${log.message}`);
         } catch {
           console.log(dataStr);
         }
@@ -394,7 +427,9 @@ async function handleHealth(args: string[]) {
   });
 
   if (!response.ok) {
-    console.error(`Health check failed | status: ${response.status} ${response.statusText}`);
+    console.error(
+      `Health check failed | status: ${response.status} ${response.statusText}`,
+    );
     console.error(await response.text());
     Deno.exit(1);
   }
@@ -494,14 +529,18 @@ async function upload(
 
   if (!response.ok) {
     console.error(
-      `Could not upload the code | status: ${response.status}, ${response.statusText}, ${await response.text()}`,
+      `Could not upload the code | status: ${response.status}, ${response.statusText}, ${await response
+        .text()}`,
     );
     Deno.exit(1);
   }
 
   const functionId = response.headers.get("munk-function-id");
 
-  console.log(`👋 New function created with id: ${functionId}${name ? ` (name: ${name})` : ""}`);
+  console.log(
+    `👋 New function created with id: ${functionId}${name ? ` (name: ${name})` : ""
+    }`,
+  );
   console.log(
     `🚀 Call it by setting the header 'munk-function-id': '${functionId}' in your call to ${domain}`,
   );
@@ -540,4 +579,3 @@ async function envs(path: string): Promise<Array<Record<string, string>>> {
     return [];
   }
 }
-
