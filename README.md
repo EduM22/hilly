@@ -1,6 +1,6 @@
-# hilly
+# munk-cli
 
-`hilly` is a CLI for
+`munk` (or `munk-cli`) is a CLI for
 [munk FaaS service](https://github.com/EduM22/munk-runner/).
 
 ## Install CLI
@@ -8,7 +8,7 @@
 Run this command:
 
 ```bash
-deno install -g -n hilly --allow-env --allow-read --allow-write --allow-run --allow-net -c deno.json -f ./src/main.ts
+deno install -g -n munk --allow-env --allow-read --allow-write --allow-run --allow-net -c deno.json -f ./src/main.ts
 ```
 
 ## Commands
@@ -18,9 +18,9 @@ deno install -g -n hilly --allow-env --allow-read --allow-write --allow-run --al
 Deploy a function to a `munk-runner` instance:
 
 ```bash
-hilly deploy ./munk.toml --t <token>
+munk deploy ./munk.toml --t <token>
 # OR
-hilly deploy ./script.ts --t <token> --name "my-func" --h http://localhost:3000/
+munk deploy ./script.ts --t <token> --name "my-func" --h http://localhost:3000/
 ```
 
 ### 2. Bundle
@@ -28,9 +28,9 @@ hilly deploy ./script.ts --t <token> --name "my-func" --h http://localhost:3000/
 Bundle a script locally without uploading:
 
 ```bash
-hilly bundle ./munk.toml
+munk bundle ./munk.toml
 # OR
-hilly bundle ./script.ts
+munk bundle ./script.ts
 ```
 
 ### 3. List
@@ -38,7 +38,7 @@ hilly bundle ./script.ts
 List all active functions deployed on the runner:
 
 ```bash
-hilly list --t <token> --h http://localhost:3000/
+munk list --t <token> --h http://localhost:3000/
 ```
 
 ### 4. Delete
@@ -46,7 +46,7 @@ hilly list --t <token> --h http://localhost:3000/
 Delete a function by ID (and purge its logs):
 
 ```bash
-hilly delete <function-id> --t <token> --h http://localhost:3000/
+munk delete <function-id> --t <token> --h http://localhost:3000/
 ```
 
 ### 5. Logs
@@ -55,12 +55,12 @@ View execution log history or stream logs in real-time via SSE:
 
 ```bash
 # View historical logs (default limit: 100)
-hilly logs <function-id> --limit 50 --t <token>
+munk logs <function-id> --limit 50 --t <token>
 
 # Stream real-time logs for all functions (SSE)
-hilly logs --follow --t <token>
+munk logs --follow --t <token>
 # OR stream real-time logs for a specific function
-hilly logs <function-id> --follow --t <token>
+munk logs <function-id> --follow --t <token>
 ```
 
 ### 6. Health
@@ -68,7 +68,7 @@ hilly logs <function-id> --follow --t <token>
 Check server status, version, and uptime:
 
 ```bash
-hilly health --h http://localhost:3000/
+munk health --h http://localhost:3000/
 ```
 
 ---

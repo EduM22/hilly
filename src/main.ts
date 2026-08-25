@@ -15,7 +15,7 @@ if (import.meta.main) {
     }
 
     if (hasFlag(args, "--version", "-v", "version")) {
-      console.log(`hilly version: ${VERSION}`);
+      console.log(`munk version: ${VERSION}`);
       Deno.exit(0);
     }
 
@@ -53,10 +53,10 @@ if (import.meta.main) {
 
 function printHelp() {
   console.log(
-    `hilly ${VERSION} - CLI for munk FaaS service (https://github.com/EduM22/munk-runner/)
+    `munk ${VERSION} - CLI for munk FaaS service (https://github.com/EduM22/munk-runner/)
 
 Usage:
-  hilly <command> [options]
+  munk <command> [options]
 
 Commands:
   deploy <file|munk.toml>   Deploy a function to munk-runner
@@ -134,7 +134,7 @@ interface TomlConfig {
 
 async function handleDeploy(args: string[]) {
   if (args.length === 0) {
-    console.error("Usage: hilly deploy <entry-point-file|munk.toml> [options]");
+    console.error("Usage: munk deploy <entry-point-file|munk.toml> [options]");
     Deno.exit(1);
   }
 
@@ -193,7 +193,7 @@ async function handleDeploy(args: string[]) {
 
 async function handleBundle(args: string[]) {
   if (args.length === 0) {
-    console.error("Usage: hilly bundle <entry-point-file|munk.toml>");
+    console.error("Usage: munk bundle <entry-point-file|munk.toml>");
     Deno.exit(1);
   }
 
@@ -262,7 +262,7 @@ async function handleList(args: string[]) {
 
 async function handleDelete(args: string[]) {
   if (args.length === 0 || args[0].startsWith("-")) {
-    console.error("Usage: hilly delete <function-id> [options]");
+    console.error("Usage: munk delete <function-id> [options]");
     Deno.exit(1);
   }
 
@@ -300,7 +300,7 @@ async function handleLogs(args: string[]) {
   } else {
     if (!functionId) {
       console.error(
-        "Usage: hilly logs <function-id> [--follow / -f] [--limit <n>] [options]",
+        "Usage: munk logs <function-id> [--follow / -f] [--limit <n>] [options]",
       );
       Deno.exit(1);
     }
