@@ -3,7 +3,7 @@ import { denoPlugin } from "@deno/esbuild-plugin";
 import { parse } from "@std/toml";
 import { dirname, resolve } from "@std/path";
 
-const VERSION = "v0.7.1";
+const VERSION = "v0.8.0";
 
 if (import.meta.main) {
   try {
